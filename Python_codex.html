@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="fa" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Codex</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    * {
+      font-family: 'Vazirmatn', sans-serif;
+    }
+    .code-block {
+      direction: ltr;
+      text-align: left;
+      font-family: 'Fira Code', 'Courier New', monospace;
+    }
+    .lesson-card:active {
+      transform: scale(0.98);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 5px rgba(34, 197, 94, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.6); }
+    }
+    .completed-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full bg-slate-900 text-white overflow-hidden">
+  <div id="app" class="h-full w-full flex flex-col overflow-auto"><!-- Header -->
+   <header id="main-header" class="bg-gradient-to-r from-emerald-600 to-teal-600 p-4 shadow-lg flex-shrink-0">
+    <div class="flex items-center justify-between">
+     <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center"><span class="text-2xl">🐍</span>
+      </div>
+      <div>
+       <h1 id="app-title" class="text-xl font-bold">Python Codex</h1>
+       <p id="welcome-msg" class="text-xs text-emerald-100">به دنیای پایتون خوش آمدید!</p>
+      </div>
+     </div>
+     <div id="progress-container" class="text-left"><span id="progress-text" class="text-xs text-emerald-100">پیشرفت: 0%</span>
+      <div class="w-20 h-2 bg-white/20 rounded-full mt-1 overflow-hidden">
+       <div id="progress-bar" class="progress-bar h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+      </div>
+     </div>
+    </div>
+   </header><!-- Main Content -->
+   <main id="main-content" class="flex-1 overflow-auto"><!-- Home View -->
+    <div id="home-view" class="p-4 space-y-4"><!-- Stats Cards -->
+     <div class="grid grid-cols-3 gap-3">
+      <div class="bg-slate-800 rounded-xl p-3 text-center border border-slate-700">
+       <div class="text-2xl mb-1">
+        📚
+       </div>
+       <div id="total-lessons" class="text-lg font-bold text-emerald-400">
+        12
+       </div>
+       <div class="text-xs text-slate-400">
+        درس
+       </div>
+      </div>
+      <div class="bg-slate-800 rounded-xl p-3 text-center border border-slate-700">
+       <div class="text-2xl mb-1">
+        ✅
+       </div>
+       <div id="completed-count" class="text-lg font-bold text-emerald-400">
+        0
+       </div>
+       <div class="text-xs text-slate-400">
+        تکمیل شده
+       </div>
+      </div>
+      <div class="bg-slate-800 rounded-xl p-3 text-center border border-slate-700">
+       <div class="text-2xl mb-1">
+        🔥
+       </div>
+       <div id="streak-count" class="text-lg font-bold text-orange-400">
+        0
+       </div>
+       <div class="text-xs text-slate-400">
+        روز متوالی
+       </div>
+      </div>
+     </div><!-- Lessons List -->
+     <div class="space-y-3" id="lessons-container"><!-- Lessons will be rendered here -->
+     </div>
+    </div><!-- Lesson View -->
+    <div id="lesson-view" class="hidden h-full flex flex-col">
+     <div class="flex-1 overflow-auto p-4 space-y-4">
+      <div id="lesson-header" class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+       <div class="flex items-center gap-3 mb-2"><span id="lesson-icon" class="text-3xl">📖</span>
+        <div>
+         <h2 id="lesson-title" class="text-lg font-bold"></h2>
+         <p id="lesson-subtitle" class="text-sm text-slate-400"></p>
+        </div>
+       </div>
+      </div>
+      <div id="lesson-content" class="space-y-4"><!-- Lesson content will be rendered here -->
+      </div>
+     </div><!-- Bottom Navigation -->
+     <div class="bg-slate-800 border-t border-slate-700 p-4 flex-shrink-0">
+      <div class="flex gap-3"><button id="back-btn" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-3 px-4 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"> <span>→</span> <span>بازگشت</span> </button> <button id="complete-btn" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 px-4 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"> <span>✓</span> <span>تکمیل درس</span> </button>
+      </div>
+     </div>
+    </div>
+   </main>
+  </div>
+  <script>
+    // Lessons Data
+    const lessonsData = [
+      {
+        id: 'intro',
+        icon: '👋',
+        title: 'معرفی پایتون',
+        subtitle: 'شروع سفر برنامه‌نویسی',
+        content: [
+          { type: 'text', content: 'پایتون یک زبان برنامه‌نویسی قدرتمند، ساده و خوانا است که در سال ۱۹۹۱ توسط گیدو ون روسوم ساخته شد.' },
+          { type: 'highlight', content: '🎯 چرا پایتون؟ سادگی، خوانایی بالا، کتابخانه‌های فراوان' },
+          { type: 'code', content: '# اولین برنامه پایتون\nprint("سلام دنیا!")' },
+          { type: 'tip', content: 'پایتون در هوش مصنوعی، علم داده، وب و اتوماسیون استفاده می‌شود.' }
+        ]
+      },
+      {
+        id: 'variables',
+        icon: '📦',
+        title: 'متغیرها',
+        subtitle: 'ذخیره‌سازی داده‌ها',
+        content: [
+          { type: 'text', content: 'متغیرها مثل جعبه‌هایی هستند که داده‌ها را در آن‌ها ذخیره می‌کنیم.' },
+          { type: 'code', content: '# تعریف متغیر\nname = "علی"\nage = 25\nheight = 1.75\nis_student = True' },
+          { type: 'highlight', content: '📝 قوانین نام‌گذاری: با حرف یا _ شروع شود، بدون فاصله' },
+          { type: 'code', content: '# استفاده از متغیر\nprint(name)\nprint(f"سن: {age}")' }
+        ]
+      },
+      {
+        id: 'datatypes',
+        icon: '🏷️',
+        title: 'انواع داده',
+        subtitle: 'int, float, str, bool',
+        content: [
+          { type: 'text', content: 'پایتون چهار نوع داده اصلی دارد:' },
+          { type: 'code', content: '# انواع داده\nint_num = 10      # عدد صحیح\nfloat_num = 3.14  # عدد اعشاری\ntext = "سلام"     # رشته\nis_true = True    # بولین' },
+          { type: 'highlight', content: '🔍 با type() نوع داده را ببینید' },
+          { type: 'code', content: 'print(type(10))      # <class \'int\'>\nprint(type("سلام"))  # <class \'str\'>' }
+        ]
+      },
+      {
+        id: 'operators',
+        icon: '➕',
+        title: 'عملگرها',
+        subtitle: 'محاسبات و مقایسه',
+        content: [
+          { type: 'text', content: 'عملگرها برای انجام محاسبات و مقایسه استفاده می‌شوند.' },
+          { type: 'code', content: '# عملگرهای ریاضی\na = 10 + 5   # جمع: 15\nb = 10 - 3   # تفریق: 7\nc = 4 * 3    # ضرب: 12\nd = 15 / 3   # تقسیم: 5.0\ne = 17 % 5   # باقیمانده: 2\nf = 2 ** 3   # توان: 8' },
+          { type: 'code', content: '# عملگرهای مقایسه\nprint(5 > 3)   # True\nprint(5 == 5)  # True\nprint(5 != 3)  # True' }
+        ]
+      },
+      {
+        id: 'strings',
+        icon: '📝',
+        title: 'رشته‌ها',
+        subtitle: 'کار با متن',
+        content: [
+          { type: 'text', content: 'رشته‌ها برای ذخیره و پردازش متن استفاده می‌شوند.' },
+          { type: 'code', content: '# ساخت رشته\ntext1 = "سلام"\ntext2 = \'دنیا\'\ntext3 = """متن\nچند خطی"""' },
+          { type: 'code', content: '# عملیات روی رشته\nname = "Python"\nprint(len(name))        # 6\nprint(name.upper())      # PYTHON\nprint(name.lower())      # python\nprint(name[0])           # P' },
+          { type: 'highlight', content: '🔗 چسباندن رشته‌ها: "سلام" + " " + "دنیا"' }
+        ]
+      },
+      {
+        id: 'lists',
+        icon: '📋',
+        title: 'لیست‌ها',
+        subtitle: 'مجموعه‌ای از داده‌ها',
+        content: [
+          { type: 'text', content: 'لیست‌ها برای ذخیره چندین مقدار در یک متغیر استفاده می‌شوند.' },
+          { type: 'code', content: '# ساخت لیست\nfruits = ["سیب", "موز", "پرتقال"]\nnumbers = [1, 2, 3, 4, 5]\nmixed = [1, "سلام", True]' },
+          { type: 'code', content: '# دسترسی به عناصر\nprint(fruits[0])   # سیب\nprint(fruits[-1])  # پرتقال\n\n# تغییر عنصر\nfruits[0] = "انگور"' },
+          { type: 'code', content: '# متدهای لیست\nfruits.append("کیوی")  # اضافه کردن\nfruits.remove("موز")   # حذف کردن\nprint(len(fruits))     # طول لیست' }
+        ]
+      },
+      {
+        id: 'conditions',
+        icon: '🔀',
+        title: 'شرط‌ها',
+        subtitle: 'if, elif, else',
+        content: [
+          { type: 'text', content: 'با شرط‌ها می‌توانیم تصمیم‌گیری کنیم که کدام کد اجرا شود.' },
+          { type: 'code', content: '# شرط ساده\nage = 18\nif age >= 18:\n    print("بزرگسال")\nelse:\n    print("نوجوان")' },
+          { type: 'code', content: '# چند شرط\nscore = 85\nif score >= 90:\n    print("عالی")\nelif score >= 70:\n    print("خوب")\nelse:\n    print("نیاز به تلاش")' },
+          { type: 'highlight', content: '⚠️ دقت کنید: تورفتگی (۴ فاصله) در پایتون مهم است!' }
+        ]
+      },
+      {
+        id: 'loops',
+        icon: '🔄',
+        title: 'حلقه‌ها',
+        subtitle: 'for و while',
+        content: [
+          { type: 'text', content: 'حلقه‌ها برای تکرار یک کار چندین بار استفاده می‌شوند.' },
+          { type: 'code', content: '# حلقه for\nfor i in range(5):\n    print(i)  # 0 تا 4\n\n# روی لیست\nfruits = ["سیب", "موز"]\nfor fruit in fruits:\n    print(fruit)' },
+          { type: 'code', content: '# حلقه while\ncount = 0\nwhile count < 5:\n    print(count)\n    count += 1' },
+          { type: 'tip', content: 'از break برای خروج و continue برای رد شدن استفاده کنید.' }
+        ]
+      },
+      {
+        id: 'functions',
+        icon: '⚡',
+        title: 'توابع',
+        subtitle: 'ساخت کد قابل استفاده مجدد',
+        content: [
+          { type: 'text', content: 'توابع بلوک‌های کدی هستند که می‌توان آن‌ها را چندین بار فراخوانی کرد.' },
+          { type: 'code', content: '# تعریف تابع\ndef greet(name):\n    return f"سلام {name}!"\n\n# فراخوانی تابع\nmessage = greet("علی")\nprint(message)  # سلام علی!' },
+          { type: 'code', content: '# تابع با پارامتر پیش‌فرض\ndef power(base, exp=2):\n    return base ** exp\n\nprint(power(3))     # 9\nprint(power(2, 3))  # 8' },
+          { type: 'highlight', content: '💡 توابع کد را تمیزتر و قابل نگهداری‌تر می‌کنند.' }
+        ]
+      },
+      {
+        id: 'dictionaries',
+        icon: '🗂️',
+        title: 'دیکشنری‌ها',
+        subtitle: 'کلید و مقدار',
+        content: [
+          { type: 'text', content: 'دیکشنری‌ها داده‌ها را به صورت جفت کلید-مقدار ذخیره می‌کنند.' },
+          { type: 'code', content: '# ساخت دیکشنری\nperson = {\n    "name": "علی",\n    "age": 25,\n    "city": "تهران"\n}' },
+          { type: 'code', content: '# دسترسی و تغییر\nprint(person["name"])  # علی\nperson["age"] = 26     # تغییر\nperson["job"] = "مهندس"  # اضافه' },
+          { type: 'code', content: '# پیمایش دیکشنری\nfor key, value in person.items():\n    print(f"{key}: {value}")' }
+        ]
+      },
+      {
+        id: 'input',
+        icon: '⌨️',
+        title: 'ورودی کاربر',
+        subtitle: 'دریافت داده از کاربر',
+        content: [
+          { type: 'text', content: 'با input() می‌توانیم از کاربر ورودی بگیریم.' },
+          { type: 'code', content: '# دریافت ورودی\nname = input("نام خود را وارد کنید: ")\nprint(f"سلام {name}!")' },
+          { type: 'code', content: '# تبدیل نوع داده\nage = int(input("سن: "))\nheight = float(input("قد: "))' },
+          { type: 'highlight', content: '⚠️ input() همیشه رشته برمی‌گرداند. برای عدد از int() یا float() استفاده کنید.' },
+          { type: 'code', content: '# مثال کامل\nnum1 = int(input("عدد اول: "))\nnum2 = int(input("عدد دوم: "))\nprint(f"مجموع: {num1 + num2}")' }
+        ]
+      },
+      {
+        id: 'errors',
+        icon: '🛡️',
+        title: 'مدیریت خطا',
+        subtitle: 'try و except',
+        content: [
+          { type: 'text', content: 'با try/except می‌توانیم خطاها را مدیریت کنیم تا برنامه متوقف نشود.' },
+          { type: 'code', content: '# مدیریت خطا\ntry:\n    num = int(input("عدد: "))\n    result = 10 / num\n    print(result)\nexcept ValueError:\n    print("لطفا عدد وارد کنید")\nexcept ZeroDivisionError:\n    print("تقسیم بر صفر!")' },
+          { type: 'code', content: '# finally همیشه اجرا می‌شود\ntry:\n    file = open("data.txt")\nexcept FileNotFoundError:\n    print("فایل یافت نشد")\nfinally:\n    print("پایان عملیات")' },
+          { type: 'tip', content: 'همیشه خطاهای احتمالی را پیش‌بینی و مدیریت کنید.' }
+        ]
+      }
+    ];
+
+    // Config and State
+    const defaultConfig = {
+      app_title: 'Python Codex',
+      welcome_message: 'به دنیای پایتون خوش آمدید!',
+      background_color: '#0f172a',
+      header_color: '#059669',
+      text_color: '#f1f5f9',
+      accent_color: '#22c55e',
+      card_color: '#1e293b'
+    };
+
+    let config = { ...defaultConfig };
+    let completedLessons = [];
+    let currentLessonId = null;
+    let isLoading = false;
+
+    // Data Handler
+    const dataHandler = {
+      onDataChanged(data) {
+        completedLessons = data;
+        updateUI();
+      }
+    };
+
+    // Render Functions
+    function renderLessons() {
+      const container = document.getElementById('lessons-container');
+      container.innerHTML = '';
+
+      lessonsData.forEach((lesson, index) => {
+        const isCompleted = completedLessons.some(c => c.lesson_id === lesson.id);
+        const card = document.createElement('div');
+        card.className = `lesson-card bg-slate-800 rounded-xl p-4 border transition-all cursor-pointer animate-fade-in ${isCompleted ? 'border-emerald-500 completed-glow' : 'border-slate-700 hover:border-slate-600'}`;
+        card.style.animationDelay = `${index * 50}ms`;
+        card.innerHTML = `
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${isCompleted ? 'bg-emerald-500/20' : 'bg-slate-700'}">
+              ${isCompleted ? '✅' : lesson.icon}
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-base">${lesson.title}</h3>
+              <p class="text-sm text-slate-400">${lesson.subtitle}</p>
+            </div>
+            <div class="text-slate-500">
+              <svg class="w-5 h-5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+        `;
+        card.onclick = () => openLesson(lesson.id);
+        container.appendChild(card);
+      });
+    }
+
+    function renderLessonContent(lesson) {
+      document.getElementById('lesson-icon').textContent = lesson.icon;
+      document.getElementById('lesson-title').textContent = lesson.title;
+      document.getElementById('lesson-subtitle').textContent = lesson.subtitle;
+
+      const contentContainer = document.getElementById('lesson-content');
+      contentContainer.innerHTML = '';
+
+      lesson.content.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'animate-fade-in';
+        div.style.animationDelay = `${index * 100}ms`;
+
+        switch (item.type) {
+          case 'text':
+            div.className += ' bg-slate-800 rounded-xl p-4 border border-slate-700';
+            div.innerHTML = `<p class="text-slate-300 leading-relaxed">${item.content}</p>`;
+            break;
+          case 'code':
+            div.className += ' bg-slate-950 rounded-xl p-4 border border-slate-700 overflow-x-auto';
+            div.innerHTML = `<pre class="code-block text-sm text-emerald-400 whitespace-pre-wrap">${escapeHtml(item.content)}</pre>`;
+            break;
+          case 'highlight':
+            div.className += ' bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4';
+            div.innerHTML = `<p class="text-emerald-300 font-medium">${item.content}</p>`;
+            break;
+          case 'tip':
+            div.className += ' bg-amber-500/10 border border-amber-500/30 rounded-xl p-4';
+            div.innerHTML = `<p class="text-amber-300"><span class="font-bold">💡 نکته:</span> ${item.content}</p>`;
+            break;
+        }
+
+        contentContainer.appendChild(div);
+      });
+
+      // Update complete button state
+      const isCompleted = completedLessons.some(c => c.lesson_id === lesson.id);
+      const completeBtn = document.getElementById('complete-btn');
+      if (isCompleted) {
+        completeBtn.innerHTML = '<span>✓</span><span>تکمیل شده</span>';
+        completeBtn.className = 'flex-1 bg-slate-600 text-slate-300 py-3 px-4 rounded-xl font-medium cursor-not-allowed flex items-center justify-center gap-2';
+        completeBtn.disabled = true;
+      } else {
+        completeBtn.innerHTML = '<span>✓</span><span>تکمیل درس</span>';
+        completeBtn.className = 'flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 px-4 rounded-xl font-medium transition-colors flex items-center justify-center gap-2';
+        completeBtn.disabled = false;
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function updateUI() {
+      renderLessons();
+      updateProgress();
+      
+      // Update current lesson view if open
+      if (currentLessonId) {
+        const lesson = lessonsData.find(l => l.id === currentLessonId);
+        if (lesson) {
+          renderLessonContent(lesson);
+        }
+      }
+    }
+
+    function updateProgress() {
+      const total = lessonsData.length;
+      const completed = completedLessons.length;
+      const percentage = Math.round((completed / total) * 100);
+
+      document.getElementById('progress-text').textContent = `پیشرفت: ${percentage}%`;
+      document.getElementById('progress-bar').style.width = `${percentage}%`;
+      document.getElementById('completed-count').textContent = completed;
+      document.getElementById('total-lessons').textContent = total;
+
+      // Calculate streak (simplified - counts consecutive days with completions)
+      const streak = calculateStreak();
+      document.getElementById('streak-count').textContent = streak;
+    }
+
+    function calculateStreak() {
+      if (completedLessons.length === 0) return 0;
+      
+      const dates = completedLessons
+        .filter(c => c.completed_at)
+        .map(c => new Date(c.completed_at).toDateString())
+        .filter((date, i, arr) => arr.indexOf(date) === i)
+        .sort((a, b) => new Date(b) - new Date(a));
+
+      if (dates.length === 0) return 0;
+
+      let streak = 1;
+      const today = new Date().toDateString();
+      const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+      if (dates[0] !== today && dates[0] !== yesterday) return 0;
+
+      for (let i = 1; i < dates.length; i++) {
+        const prevDate = new Date(dates[i - 1]);
+        const currDate = new Date(dates[i]);
+        const diff = (prevDate - currDate) / 86400000;
+        
+        if (diff === 1) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+
+      return streak;
+    }
+
+    // Navigation
+    function openLesson(lessonId) {
+      currentLessonId = lessonId;
+      const lesson = lessonsData.find(l => l.id === lessonId);
+      if (!lesson) return;
+
+      document.getElementById('home-view').classList.add('hidden');
+      document.getElementById('lesson-view').classList.remove('hidden');
+      document.getElementById('lesson-view').classList.add('flex');
+
+      renderLessonContent(lesson);
+    }
+
+    function goBack() {
+      currentLessonId = null;
+      document.getElementById('lesson-view').classList.add('hidden');
+      document.getElementById('lesson-view').classList.remove('flex');
+      document.getElementById('home-view').classList.remove('hidden');
+    }
+
+    async function completeLesson() {
+      if (!currentLessonId || isLoading) return;
+      
+      const alreadyCompleted = completedLessons.some(c => c.lesson_id === currentLessonId);
+      if (alreadyCompleted) return;
+
+      if (completedLessons.length >= 999) {
+        showToast('حداکثر تعداد رکوردها پر شده است!', 'error');
+        return;
+      }
+
+      isLoading = true;
+      const completeBtn = document.getElementById('complete-btn');
+      completeBtn.innerHTML = '<span class="animate-spin">⏳</span><span>در حال ذخیره...</span>';
+      completeBtn.disabled = true;
+
+      const result = await window.dataSdk.create({
+        lesson_id: currentLessonId,
+        completed: true,
+        completed_at: new Date().toISOString()
+      });
+
+      isLoading = false;
+
+      if (result.isOk) {
+        showToast('آفرین! درس تکمیل شد 🎉', 'success');
+      } else {
+        showToast('خطا در ذخیره‌سازی', 'error');
+        completeBtn.innerHTML = '<span>✓</span><span>تکمیل درس</span>';
+        completeBtn.disabled = false;
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `fixed bottom-20 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in ${type === 'success' ? 'bg-emerald-600' : 'bg-red-600'} text-white font-medium`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 2000);
+    }
+
+    // Config Change Handler
+    async function onConfigChange(newConfig) {
+      config = { ...config, ...newConfig };
+      
+      // Update header
+      document.getElementById('app-title').textContent = config.app_title || defaultConfig.app_title;
+      document.getElementById('welcome-msg').textContent = config.welcome_message || defaultConfig.welcome_message;
+      
+      // Update colors
+      document.body.style.backgroundColor = config.background_color || defaultConfig.background_color;
+      document.getElementById('main-header').style.background = `linear-gradient(to right, ${config.header_color || defaultConfig.header_color}, ${config.header_color || defaultConfig.header_color}dd)`;
+    }
+
+    // Element SDK Setup
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+          },
+          {
+            get: () => config.card_color || defaultConfig.card_color,
+            set: (v) => { config.card_color = v; window.elementSdk.setConfig({ card_color: v }); }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+          },
+          {
+            get: () => config.header_color || defaultConfig.header_color,
+            set: (v) => { config.header_color = v; window.elementSdk.setConfig({ header_color: v }); }
+          },
+          {
+            get: () => config.accent_color || defaultConfig.accent_color,
+            set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || 'Vazirmatn',
+          set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+        },
+        fontSizeable: {
+          get: () => config.font_size || 16,
+          set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['app_title', config.app_title || defaultConfig.app_title],
+        ['welcome_message', config.welcome_message || defaultConfig.welcome_message]
+      ]);
+    }
+
+    // Initialize
+    async function init() {
+      // Initialize Element SDK
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities,
+          mapToEditPanelValues
+        });
+        config = { ...defaultConfig, ...window.elementSdk.config };
+      }
+
+      // Initialize Data SDK
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          console.error('Failed to initialize data SDK');
+        }
+      }
+
+      // Event Listeners
+      document.getElementById('back-btn').addEventListener('click', goBack);
+      document.getElementById('complete-btn').addEventListener('click', completeLesson);
+
+      // Initial render
+      renderLessons();
+      updateProgress();
+      onConfigChange(config);
+    }
+
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c9c6d2022daa63e',t:'MTc3MDM5OTU1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
