@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="fa" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>آموزش PHP حرفه‌ای</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Vazirmatn', sans-serif; }
+    
+    html, body, #app { height: 100%; }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #667eea; border-radius: 10px; }
+    
+    .gradient-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .gradient-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .gradient-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .gradient-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    .gradient-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    
+    .code-block {
+      background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .code-header {
+      background: rgba(255,255,255,0.05);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27ca40; }
+    
+    pre {
+      margin: 0;
+      padding: 20px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    
+    .php-tag { color: #ff79c6; font-weight: 600; }
+    .php-keyword { color: #ff79c6; font-weight: 600; }
+    .php-function { color: #50fa7b; font-weight: 600; }
+    .php-string { color: #f1fa8c; }
+    .php-variable { color: #8be9fd; }
+    .php-comment { color: #6272a4; font-style: italic; }
+    .php-number { color: #bd93f9; }
+    
+    .lesson-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(102, 126, 234, 0.1);
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+      border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+    
+    .lesson-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 60px rgba(102, 126, 234, 0.2);
+    }
+    
+    .lesson-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .progress-ring {
+      transform: rotate(-90deg);
+      filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.3));
+    }
+    
+    .nav-item {
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      border-radius: 50px;
+    }
+    
+    .nav-item.active {
+      color: #667eea;
+      font-weight: 600;
+    }
+    
+    @keyframes slideUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(30px);
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6); }
+    }
+    
+    .animate-slide-up {
+      animation: slideUp 0.6s ease forwards;
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease forwards;
+    }
+    
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .animate-pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    .tip-card {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 2px solid #f59e0b;
+      border-radius: 16px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .tip-card::before {
+      content: '💡';
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      font-size: 80px;
+      opacity: 0.1;
+    }
+    
+    .output-box {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border: 2px solid #22c55e;
+      border-radius: 16px;
+      padding: 16px;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .completion-badge {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      color: white;
+      font-weight: 700;
+      font-size: 24px;
+      box-shadow: 0 10px 30px rgba(67, 233, 123, 0.3);
+    }
+    
+    .stats-card {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      border: 2px solid rgba(102, 126, 234, 0.2);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .stats-card:hover {
+      border-color: rgba(102, 126, 234, 0.5);
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+    }
+    
+    .main-wrapper {
+      overflow-auto;
+      padding-bottom: 140px;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .lesson-nav-bar {
+      position: fixed;
+      bottom: 80px;
+      left: 0;
+      right: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.98) 50%, white 100%);
+      padding: 20px 16px 16px;
+      border-top: 2px solid rgba(102, 126, 234, 0.1);
+      z-index: 40;
+      display: none;
+    }
+
+    .lesson-nav-bar.active {
+      display: block;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      flex: 1;
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .nav-btn.prev {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      color: #667eea;
+      border: 2px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .nav-btn.prev:hover {
+      border-color: #667eea;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+      transform: translateX(4px);
+    }
+
+    .nav-btn.prev:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .nav-btn.next {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    }
+
+    .nav-btn.next:hover {
+      box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+      transform: translateX(-4px);
+    }
+
+    .nav-btn.next.completed {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .nav-btn.next.completed:hover {
+      box-shadow: 0 12px 32px rgba(67, 233, 123, 0.3);
+    }
+
+    .lesson-progress {
+      text-align: center;
+      padding: 8px;
+      background: rgba(102, 126, 234, 0.05);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .progress-bar-small {
+      width: 100%;
+      height: 4px;
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar-small-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      transition: width 0.3s ease;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full overflow-hidden bg-gray-50">
+  <div id="app" class="h-full flex flex-col">
+   <!-- Header -->
+   <header class="gradient-1 text-white p-5 sticky top-0 z-50 shadow-lg">
+    <div class="flex items-end justify-between mb-4">
+     <div class="flex items-end gap-3">
+      <div class="w-12 h-12 gradient-4 rounded-2xl flex items-center justify-center text-2xl animate-float shadow-lg">
+       🐘
+      </div>
+      <div>
+       <h1 id="app-title" class="font-black text-2xl">آموزش PHP</h1>
+       <p class="text-sm text-white/80">حرفه‌ای و تعاملی</p>
+      </div>
+     </div>
+     <div class="text-right">
+      <div class="text-3xl font-black" id="progress-text">
+       0/12
+      </div>
+      <p class="text-xs text-white/70">درس انجام‌شده</p>
+     </div>
+    </div>
+    <div class="w-full bg-white/20 h-2 rounded-full overflow-hidden">
+     <div id="progress-bar" class="h-full bg-white transition-all duration-500" style="width: 0%"></div>
+    </div>
+   </header><!-- Main Content -->
+   <main class="flex-1 overflow-auto main-wrapper" id="main-content">
+    <!-- Home View -->
+    <div id="home-view" class="p-5 space-y-5">
+     <!-- Welcome Card -->
+     <div class="gradient-1 rounded-3xl p-6 text-white animate-slide-up shadow-xl">
+      <div class="flex items-start justify-between mb-3">
+       <div>
+        <h2 id="welcome-text" class="text-2xl font-black mb-2">به دنیای PHP 🎉</h2>
+        <p class="text-sm text-white/90 leading-relaxed">بیش از 80% وب‌سایت‌های جهان از PHP استفاده می‌کنند. حالا نوبت شماست!</p>
+       </div><span class="text-5xl">🚀</span>
+      </div>
+      <div class="mt-4 flex gap-2">
+       <div class="lesson-badge bg-white/20 text-white">
+        <span>⭐</span> <span>12 درس کامل</span>
+       </div>
+       <div class="lesson-badge bg-white/20 text-white">
+        <span>🎯</span> <span>عملی و تعاملی</span>
+       </div>
+      </div>
+     </div><!-- Stats -->
+     <div class="grid grid-cols-3 gap-3">
+      <div class="stats-card">
+       <div class="text-2xl font-black text-purple-600" id="stat-completed">
+        0
+       </div>
+       <p class="text-xs text-gray-600 mt-1">درس انجام‌شده</p>
+      </div>
+      <div class="stats-card">
+       <div class="text-2xl font-black text-blue-600" id="stat-inprogress">
+        0
+       </div>
+       <p class="text-xs text-gray-600 mt-1">درحال‌مطالعه</p>
+      </div>
+      <div class="stats-card">
+       <div class="text-2xl font-black text-pink-600" id="stat-score">
+        0%
+       </div>
+       <p class="text-xs text-gray-600 mt-1">امتیاز آزمون</p>
+      </div>
+     </div><!-- Lessons Grid -->
+     <div class="space-y-3" id="lessons-list">
+      <!-- Lessons will be rendered here -->
+     </div>
+    </div><!-- Lesson View -->
+    <div id="lesson-view" class="hidden p-5 space-y-5">
+     <button onclick="showHome()" class="flex items-center gap-2 text-purple-600 font-bold mb-4 hover:gap-3 transition-all hover:text-purple-700 text-lg">
+      <svg class="w-6 h-6 rotate-180" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg><span>بازگشت به خانه</span> </button>
+     <div id="lesson-content" class="space-y-5 animate-fade-in">
+      <!-- Lesson content will be rendered here -->
+     </div>
+    </div><!-- Quiz View -->
+    <div id="quiz-view" class="hidden p-5 space-y-5 pb-32">
+     <div class="animate-slide-up">
+      <h2 class="text-3xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">آزمون PHP 🧠</h2>
+      <p class="text-gray-600">دانش خود را تست کنید</p>
+     </div>
+     <div id="quiz-content" class="space-y-4">
+      <!-- Quiz will be rendered here -->
+     </div>
+    </div><!-- Cheatsheet View -->
+    <div id="cheatsheet-view" class="hidden p-5 space-y-5 pb-32">
+     <div class="animate-slide-up">
+      <h2 class="text-3xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">راهنمای سریع 📚</h2>
+      <p class="text-gray-600">فرمول‌های مهم PHP در یک نگاه</p>
+     </div>
+     <div id="cheatsheet-content" class="space-y-3">
+      <!-- Cheatsheet will be rendered here -->
+     </div>
+    </div>
+   </main><!-- Lesson Navigation Bar -->
+   <div id="lesson-nav" class="lesson-nav-bar">
+    <div class="lesson-progress">
+     <div class="text-xs text-gray-600 mb-2">
+      درس <span id="current-lesson-num">1</span> از 12
+     </div>
+     <div class="progress-bar-small">
+      <div class="progress-bar-small-fill" id="progress-bar-small"></div>
+     </div>
+    </div>
+    <div class="nav-buttons"><button id="prev-btn" class="nav-btn prev" onclick="prevLesson()">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg><span>درس قبلی</span> </button> <button id="next-btn" class="nav-btn next" onclick="nextLesson()"> <span>درس بعدی</span>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg></button>
+    </div>
+   </div><!-- Bottom Navigation -->
+   <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-purple-100 px-4 py-3 flex justify-around shadow-2xl z-50">
+    <button onclick="showHome()" class="nav-item active flex flex-col items-center gap-1 px-6 py-2" id="nav-home">
+     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+     </svg><span class="text-xs font-bold">خانه</span> </button> <button onclick="showQuiz()" class="nav-item flex flex-col items-center gap-1 px-6 py-2 text-gray-500" id="nav-quiz">
+     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+     </svg><span class="text-xs font-bold">آزمون</span> </button> <button onclick="showCheatsheet()" class="nav-item flex flex-col items-center gap-1 px-6 py-2 text-gray-500" id="nav-cheat">
+     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C6.228 6.253 2 10.487 2 15.5c0 5.013 4.228 9.247 10 9.247s10-4.234 10-9.247c0-5.013-4.228-9.247-10-9.247" />
+     </svg><span class="text-xs font-bold">راهنما</span> </button>
+   </nav>
+  </div>
+  <script>
+    const defaultConfig = {
+      app_title: 'آموزش PHP',
+      welcome_text: 'به دنیای PHP خوش آمدید! 🎉',
+      primary_color: '#667eea',
+      secondary_color: '#764ba2',
+      background_color: '#f9fafb',
+      text_color: '#1f2937',
+      card_color: '#ffffff'
+    };
+
+    const lessons = [
+      {
+        id: 1,
+        title: 'PHP چیست؟',
+        icon: '🚀',
+        description: 'آشنایی با زبان PHP',
+        content: `<div class="lesson-card p-6 space-y-5 animate-slide-up"><h3 class="text-2xl font-black text-gray-800">PHP چیست؟</h3><p class="text-gray-600 leading-relaxed">PHP (مخفف Hypertext Preprocessor) یک زبان برنامه‌نویسی سمت سرور است که برای توسعه وب طراحی شده.</p><div class="tip-card"><p class="text-sm text-amber-800 relative z-10">💡 <strong>نکته:</strong> بیش از 80% وب‌سایت‌های دنیا از PHP استفاده می‌کنند!</p></div><h4 class="font-bold text-gray-700 text-lg mt-4">ویژگی‌های PHP:</h4><ul class="space-y-3 text-gray-600"><li class="flex items-center gap-3"><span class="text-green-500 text-xl">✓</span><span><strong>رایگان و متن‌باز</strong> - هیچ هزینه‌ای ندارد</span></li><li class="flex items-center gap-3"><span class="text-green-500 text-xl">✓</span><span><strong>یادگیری آسان</strong> - نحو ساده</span></li><li class="flex items-center gap-3"><span class="text-green-500 text-xl">✓</span><span><strong>پشتیبانی از پایگاه داده</strong> - MySQL، PostgreSQL و غیره</span></li><li class="flex items-center gap-3"><span class="text-green-500 text-xl">✓</span><span><strong>جامعه بزرگ</strong> - میلیون‌ها برنامه‌نویس</span></li></ul></div>`
+      },
+      {
+        id: 2,
+        title: 'اولین کد PHP',
+        icon: '👋',
+        description: 'نوشتن Hello World',
+        content: `<div class="lesson-card p-6 space-y-5 animate-slide-up"><h3 class="text-2xl font-black text-gray-800">سلام دنیا!</h3><p class="text-gray-600">هر فایل PHP با تگ <code class="bg-gray-100 px-2 py-1 rounded font-bold text-purple-600">&lt;?php</code> شروع می‌شود.</p><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span><span class="text-gray-400 text-sm mr-auto font-bold">hello.php</span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-function">echo</span> <span class="php-string">"سلام دنیا!"</span>;
+<span class="php-tag">?&gt;</span></code></pre></div><div class="output-box"><p class="text-sm text-gray-500 mb-2 font-bold">📤 خروجی:</p><p class="text-green-700 font-bold text-lg">سلام دنیا!</p></div><div class="tip-card"><p class="text-sm text-amber-800 relative z-10">💡 <strong>echo</strong> برای نمایش متن در صفحه استفاده می‌شود.</p></div></div>`
+      },
+      {
+        id: 3,
+        title: 'متغیرها',
+        icon: '📦',
+        description: 'تعریف و استفاده از متغیرها',
+        content: `<div class="lesson-card p-6 space-y-5 animate-slide-up"><h3 class="text-2xl font-black text-gray-800">متغیرها در PHP</h3><p class="text-gray-600">متغیرها با علامت <strong class="text-purple-600">$</strong> شروع می‌شوند و نیازی به تعریف نوع ندارند.</p><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span><span class="text-gray-400 text-sm mr-auto font-bold">variables.php</span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-variable">$name</span> = <span class="php-string">"علی"</span>;
+<span class="php-variable">$age</span> = <span class="php-number">25</span>;
+<span class="php-variable">$price</span> = <span class="php-number">99.99</span>;
+<span class="php-variable">$isStudent</span> = <span class="php-keyword">true</span>;
+
+<span class="php-function">echo</span> <span class="php-variable">$name</span>;
+<span class="php-tag">?&gt;</span></code></pre></div><div class="output-box"><p class="text-sm text-gray-500 mb-2 font-bold">📤 خروجی:</p><p class="text-green-700 font-bold text-lg">علی</p></div><h4 class="font-bold text-gray-700 text-lg mt-4">انواع داده:</h4><div class="grid grid-cols-2 gap-3"><div class="gradient-1 p-4 rounded-2xl text-white"><span class="font-bold text-sm">String</span><p class="text-xs text-white/80 mt-1">متن</p></div><div class="gradient-2 p-4 rounded-2xl text-white"><span class="font-bold text-sm">Integer</span><p class="text-xs text-white/80 mt-1">عدد صحیح</p></div><div class="gradient-3 p-4 rounded-2xl text-white"><span class="font-bold text-sm">Float</span><p class="text-xs text-white/80 mt-1">عدد اعشاری</p></div><div class="gradient-4 p-4 rounded-2xl text-white"><span class="font-bold text-sm">Boolean</span><p class="text-xs text-white/80 mt-1">true/false</p></div></div></div>`
+      },
+      {
+        id: 4,
+        title: 'عملگرها',
+        icon: '🔢',
+        description: 'عملگرهای ریاضی و مقایسه‌ای',
+        content: `<div class="lesson-card p-6 space-y-5 animate-slide-up"><h3 class="text-2xl font-black text-gray-800">عملگرها در PHP</h3><h4 class="font-bold text-gray-700 text-lg">عملگرهای ریاضی:</h4><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-variable">$a</span> = <span class="php-number">10</span>;
+<span class="php-variable">$b</span> = <span class="php-number">3</span>;
+
+<span class="php-function">echo</span> <span class="php-variable">$a</span> + <span class="php-variable">$b</span>;  <span class="php-comment">// 13</span>
+<span class="php-function">echo</span> <span class="php-variable">$a</span> - <span class="php-variable">$b</span>;  <span class="php-comment">// 7</span>
+<span class="php-function">echo</span> <span class="php-variable">$a</span> * <span class="php-variable">$b</span>;  <span class="php-comment">// 30</span>
+<span class="php-function">echo</span> <span class="php-variable">$a</span> / <span class="php-variable">$b</span>;  <span class="php-comment">// 3.33</span>
+<span class="php-function">echo</span> <span class="php-variable">$a</span> % <span class="php-variable">$b</span>;  <span class="php-comment">// 1</span>
+<span class="php-tag">?&gt;</span></code></pre></div><h4 class="font-bold text-gray-700 text-lg mt-4">عملگرهای مقایسه‌ای:</h4><div class="grid grid-cols-2 gap-2"><div class="gradient-1 p-3 rounded-xl text-white text-center"><span class="font-bold">=</span>=<br><span class="text-xs">برابر</span></div><div class="gradient-2 p-3 rounded-xl text-white text-center"><span class="font-bold">=</span>==<br><span class="text-xs">نوع و مقدار</span></div><div class="gradient-3 p-3 rounded-xl text-white text-center"><span class="font-bold">!</span>=<br><span class="text-xs">نابرابر</span></div><div class="gradient-4 p-3 rounded-xl text-white text-center"><span class="font-bold">&gt;</span> &amp; <span class="font-bold">&lt;</span><br><span class="text-xs">بزرگ/کوچک</span></div></div></div>`
+      },
+      {
+        id: 5,
+        title: 'شرط‌ها',
+        icon: '🔀',
+        description: 'if, else و switch',
+        content: `<div class="lesson-card p-6 space-y-5 animate-slide-up"><h3 class="text-2xl font-black text-gray-800">دستورات شرطی</h3><h4 class="font-bold text-gray-700 text-lg">if / else:</h4><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-variable">$age</span> = <span class="php-number">20</span>;
+
+<span class="php-keyword">if</span> (<span class="php-variable">$age</span> >= <span class="php-number">18</span>) {
+    <span class="php-function">echo</span> <span class="php-string">"بزرگسال"</span>;
+} <span class="php-keyword">else</span> {
+    <span class="php-function">echo</span> <span class="php-string">"نوجوان"</span>;
+}
+<span class="php-tag">?&gt;</span></code></pre></div><div class="output-box"><p class="text-sm text-gray-500 mb-2 font-bold">📤 خروجی:</p><p class="text-green-700 font-bold text-lg">بزرگسال</p></div><h4 class="font-bold text-gray-700 text-lg mt-4">elseif:</h4><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-variable">$score</span> = <span class="php-number">85</span>;
+
+<span class="php-keyword">if</span> (<span class="php-variable">$score</span> >= <span class="php-number">90</span>) {
+    <span class="php-function">echo</span> <span class="php-string">"عالی!"</span>;
+} <span class="php-keyword">elseif</span> (<span class="php-variable">$score</span> >= <span class="php-number">70</span>) {
+    <span class="php-function">echo</span> <span class="php-string">"خوب!"</span>;
+}
+<span class="php-tag">?&gt;</span></code></pre></div></div>`
+      },
+      {
+        id: 6,
+        title: 'حلقه‌ها',
+        icon: '🔄',
+        description: 'for, while و foreach',
+        content: `<div class="lesson-card p-6 space-y-5 animate-slide-up"><h3 class="text-2xl font-black text-gray-800">حلقه‌ها در PHP</h3><h4 class="font-bold text-gray-700 text-lg">حلقه for:</h4><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-keyword">for</span> (<span class="php-variable">$i</span> = <span class="php-number">1</span>; <span class="php-variable">$i</span> <= <span class="php-number">5</span>; <span class="php-variable">$i</span>++) {
+    <span class="php-function">echo</span> <span class="php-variable">$i</span> . <span class="php-string">" "</span>;
+}
+<span class="php-tag">?&gt;</span></code></pre></div><div class="output-box"><p class="text-sm text-gray-500 mb-2 font-bold">📤 خروجی:</p><p class="text-green-700 font-bold text-lg">1 2 3 4 5</p></div><h4 class="font-bold text-gray-700 text-lg mt-4">حلقه foreach:</h4><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-variable">$fruits</span> = [<span class="php-string">"سیب"</span>, <span class="php-string">"موز"</span>];
+
+<span class="php-keyword">foreach</span> (<span class="php-variable">$fruits</span> <span class="php-keyword">as</span> <span class="php-variable">$f</span>) {
+    <span class="php-function">echo</span> <span class="php-variable">$f</span>;
+}
+<span class="php-tag">?&gt;</span></code></pre></div></div>`
+      },
+      {
+        id: 7,
+        title: 'آرایه‌ها',
+        icon: '📋',
+        description: 'آرایه‌های ساده و انجمنی',
+        content: `<div class="lesson-card p-6 space-y-5 animate-slide-up"><h3 class="text-2xl font-black text-gray-800">آرایه‌ها در PHP</h3><h4 class="font-bold text-gray-700 text-lg">آرایه ساده:</h4><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-variable">$colors</span> = [<span class="php-string">"قرمز"</span>, <span class="php-string">"سبز"</span>];
+
+<span class="php-function">echo</span> <span class="php-variable">$colors</span>[<span class="php-number">0</span>];  <span class="php-comment">// قرمز</span>
+<span class="php-tag">?&gt;</span></code></pre></div><h4 class="font-bold text-gray-700 text-lg mt-4">آرایه انجمنی:</h4><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-variable">$person</span> = [
+    <span class="php-string">"name"</span> => <span class="php-string">"مریم"</span>,
+    <span class="php-string">"age"</span> => <span class="php-number">28</span>
+];
+
+<span class="php-function">echo</span> <span class="php-variable">$person</span>[<span class="php-string">"name"</span>];
+<span class="php-tag">?&gt;</span></code></pre></div><div class="tip-card"><p class="text-sm text-amber-800 relative z-10">💡 از <code>count($array)</code> برای شمارش استفاده کنید!</p></div></div>`
+      },
+      {
+        id: 8,
+        title: 'توابع',
+        icon: '⚡',
+        description: 'ساخت و استفاده از توابع',
+        content: `<div class="lesson-card p-6 space-y-5 animate-slide-up"><h3 class="text-2xl font-black text-gray-800">توابع در PHP</h3><p class="text-gray-600">توابع کدهای قابل استفاده مجدد هستند.</p><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-keyword">function</span> <span class="php-function">add</span>(<span class="php-variable">$a</span>, <span class="php-variable">$b</span>) {
+    <span class="php-keyword">return</span> <span class="php-variable">$a</span> + <span class="php-variable">$b</span>;
+}
+
+<span class="php-function">echo</span> <span class="php-function">add</span>(<span class="php-number">5</span>, <span class="php-number">3</span>);
+<span class="php-tag">?&gt;</span></code></pre></div><div class="output-box"><p class="text-sm text-gray-500 mb-2 font-bold">📤 خروجی:</p><p class="text-green-700 font-bold text-lg">8</p></div><div class="bg-green-50 border-2 border-green-400 p-4 rounded-2xl mt-4"><p class="text-green-800 font-black">🎉 آفرین!</p><p class="text-green-700 text-sm">8 درس را فراگرفتید!</p></div></div>`
+      },
+      {
+        id: 9,
+        title: 'رشته‌ها',
+        icon: '📝',
+        description: 'کار با متن‌های PHP',
+        content: `<div class="lesson-card p-6 space-y-5 animate-slide-up"><h3 class="text-2xl font-black text-gray-800">رشته‌ها (Strings)</h3><h4 class="font-bold text-gray-700 text-lg">پیوند رشته‌ها:</h4><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-variable">$first</span> = <span class="php-string">"سلام"</span>;
+<span class="php-variable">$second</span> = <span class="php-string">"جهان"</span>;
+
+<span class="php-function">echo</span> <span class="php-variable">$first</span> . <span class="php-string">" "</span> . <span class="php-variable">$second</span>;
+<span class="php-tag">?&gt;</span></code></pre></div><div class="output-box"><p class="text-sm text-gray-500 mb-2 font-bold">📤 خروجی:</p><p class="text-green-700 font-bold text-lg">سلام جهان</p></div><h4 class="font-bold text-gray-700 text-lg mt-4">توابع رشته‌ای:</h4><div class="grid grid-cols-2 gap-3 text-sm"><div class="bg-blue-50 p-3 rounded-xl border-2 border-blue-200"><code class="font-bold text-blue-600">strlen()</code><p class="text-xs text-gray-600 mt-1">طول رشته</p></div><div class="bg-purple-50 p-3 rounded-xl border-2 border-purple-200"><code class="font-bold text-purple-600">strtoupper()</code><p class="text-xs text-gray-600 mt-1">حروف بزرگ</p></div><div class="bg-pink-50 p-3 rounded-xl border-2 border-pink-200"><code class="font-bold text-pink-600">strtolower()</code><p class="text-xs text-gray-600 mt-1">حروف کوچک</p></div><div class="bg-green-50 p-3 rounded-xl border-2 border-green-200"><code class="font-bold text-green-600">str_replace()</code><p class="text-xs text-gray-600 mt-1">جایگزینی</p></div></div></div>`
+      },
+      {
+        id: 10,
+        title: 'تاریخ و زمان',
+        icon: '⏰',
+        description: 'کار با تاریخ و زمان',
+        content: `<div class="lesson-card p-6 space-y-5 animate-slide-up"><h3 class="text-2xl font-black text-gray-800">تاریخ و زمان</h3><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-function">echo</span> <span class="php-function">date</span>(<span class="php-string">"Y-m-d"</span>);
+<span class="php-comment">// 2024-01-15</span>
+
+<span class="php-function">echo</span> <span class="php-function">date</span>(<span class="php-string">"H:i:s"</span>);
+<span class="php-comment">// 14:30:45</span>
+
+<span class="php-function">echo</span> <span class="php-function">time</span>();
+<span class="php-comment">// ثانیه از epoch</span>
+<span class="php-tag">?&gt;</span></code></pre></div><h4 class="font-bold text-gray-700 text-lg mt-4">کدهای تاریخ:</h4><div class="grid grid-cols-2 gap-2 text-sm"><div class="gradient-1 p-2 rounded-lg text-white text-center"><span class="font-bold">Y</span><br><span class="text-xs">سال 4 رقمی</span></div><div class="gradient-2 p-2 rounded-lg text-white text-center"><span class="font-bold">m</span><br><span class="text-xs">ماه</span></div><div class="gradient-3 p-2 rounded-lg text-white text-center"><span class="font-bold">d</span><br><span class="text-xs">روز</span></div><div class="gradient-4 p-2 rounded-lg text-white text-center"><span class="font-bold">H:i:s</span><br><span class="text-xs">ساعت:دقیقه:ثانیه</span></div></div></div>`
+      },
+      {
+        id: 11,
+        title: 'فرم‌های PHP',
+        icon: '📮',
+        description: 'پردازش داده‌های فرم',
+        content: `<div class="lesson-card p-6 space-y-5 animate-slide-up"><h3 class="text-2xl font-black text-gray-800">فرم‌های PHP</h3><h4 class="font-bold text-gray-700 text-lg">دریافت داده GET:</h4><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-function">echo</span> <span class="php-variable">$_GET</span>[<span class="php-string">"name"</span>];
+<span class="php-tag">?&gt;</span></code></pre></div><h4 class="font-bold text-gray-700 text-lg mt-4">دریافت داده POST:</h4><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-function">echo</span> <span class="php-variable">$_POST</span>[<span class="php-string">"email"</span>];
+<span class="php-tag">?&gt;</span></code></pre></div><div class="tip-card"><p class="text-sm text-amber-800 relative z-10">💡 <strong>GET</strong> برای داده‌های کوچک و <strong>POST</strong> برای حساس!</p></div></div>`
+      },
+      {
+        id: 12,
+        title: 'فایل‌ها',
+        icon: '📂',
+        description: 'خواندن و نوشتن فایل‌ها',
+        content: `<div class="lesson-card p-6 space-y-5 animate-slide-up"><h3 class="text-2xl font-black text-gray-800">کار با فایل‌ها</h3><h4 class="font-bold text-gray-700 text-lg">خواندن فایل:</h4><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-variable">$content</span> = <span class="php-function">file_get_contents</span>(<span class="php-string">"file.txt"</span>);
+<span class="php-function">echo</span> <span class="php-variable">$content</span>;
+<span class="php-tag">?&gt;</span></code></pre></div><h4 class="font-bold text-gray-700 text-lg mt-4">نوشتن در فایل:</h4><div class="code-block"><div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div><pre><code><span class="php-tag">&lt;?php</span>
+<span class="php-variable">$text</span> = <span class="php-string">"سلام دنیا"</span>;
+<span class="php-function">file_put_contents</span>(<span class="php-string">"file.txt"</span>, <span class="php-variable">$text</span>);
+<span class="php-tag">?&gt;</span></code></pre></div><div class="bg-green-50 border-2 border-green-400 p-4 rounded-2xl mt-4"><p class="text-green-800 font-black">🏆 تبریک!</p><p class="text-green-700 text-sm">تمام 12 درس را تکمیل کردید! شما حالا برنامه‌نویس PHP هستید!</p></div></div>`
+      }
+    ];
+
+    const quizQuestions = [
+      { question: 'متغیرها در PHP با چه علامتی شروع می‌شوند؟', options: ['@', '#', '$', '&'], correct: 2 },
+      { question: 'کدام دستور برای نمایش خروجی استفاده می‌شود؟', options: ['print', 'echo', 'هر دو', 'display'], correct: 2 },
+      { question: 'فایل‌های PHP چه پسوندی دارند؟', options: ['.html', '.php', '.js', '.py'], correct: 1 },
+      { question: 'کدام حلقه برای آرایه‌ها مناسب‌تر است؟', options: ['for', 'while', 'foreach', 'do-while'], correct: 2 },
+      { question: 'نوع داده Boolean چه مقادیری دارد؟', options: ['0 و 1', 'yes و no', 'true و false', 'همه موارد'], correct: 2 },
+      { question: 'تابع strlen چه کار می‌کند؟', options: ['رشته را پاک کند', 'طول رشته را بگیرد', 'رشته را الله‌ای کند', 'رشته را معکوس کند'], correct: 1 },
+      { question: 'date("Y-m-d") چه نتیجه‌ای می‌دهد؟', options: ['ساعت', 'سال-ماه-روز', 'روز-ماه-سال', 'ثانیه'], correct: 1 },
+      { question: 'POST برای چه استفاده می‌شود؟', options: ['داده‌های کوچک', 'داده‌های حساس', 'نمایش URL', 'cache'], correct: 1 }
+    ];
+
+    const cheatsheetItems = [
+      { title: 'نمایش خروجی', code: 'echo "متن";' },
+      { title: 'متغیر', code: '$name = "مقدار";' },
+      { title: 'آرایه', code: '$arr = [1, 2, 3];' },
+      { title: 'آرایه انجمنی', code: '$arr = ["key" => "val"];' },
+      { title: 'شرط', code: 'if ($x > 0) { ... }' },
+      { title: 'حلقه for', code: 'for ($i=0; $i<10; $i++) { }' },
+      { title: 'حلقه foreach', code: 'foreach ($arr as $v) { }' },
+      { title: 'تابع', code: 'function name($p) { }' },
+      { title: 'طول رشته', code: 'strlen($str)' },
+      { title: 'تاریخ کنونی', code: 'date("Y-m-d")' },
+      { title: 'رشته‌ای بزرگ', code: 'strtoupper($str)' },
+      { title: 'فایل', code: 'file_get_contents("f.txt")' }
+    ];
+
+    let currentLesson = 0;
+    let completedLessons = new Map();
+    let quizAnswers = {};
+    let stats = { completed: 0, inProgress: 0, score: 0 };
+
+    const dataHandler = {
+      onDataChanged(data) {
+        completedLessons.clear();
+        data.forEach(record => {
+          completedLessons.set(record.lessonId, record);
+        });
+        updateStats();
+        renderLessons();
+      }
+    };
+
+    async function initDataSDK() {
+      if (!window.dataSdk) return;
+      const result = await window.dataSdk.init(dataHandler);
+      if (!result.isOk) console.error('Data SDK init failed');
+    }
+
+    async function markLessonComplete(lessonId) {
+      if (!window.dataSdk) return;
+      const existing = completedLessons.get(lessonId);
+      if (existing) return;
+      
+      const result = await window.dataSdk.create({
+        id: 'lesson_' + Date.now(),
+        lessonId: lessonId,
+        title: lessons[lessonId - 1].title,
+        completedAt: new Date().toISOString(),
+        score: 0
+      });
+      
+      if (result.isOk) {
+        completedLessons.set(lessonId, { lessonId, title: lessons[lessonId - 1].title });
+      }
+    }
+
+    function updateStats() {
+      stats.completed = completedLessons.size;
+      stats.inProgress = Math.min(stats.completed + 1, lessons.length);
+      stats.score = Math.round((stats.completed / lessons.length) * 100);
+      
+      document.getElementById('stat-completed').textContent = stats.completed;
+      document.getElementById('stat-inprogress').textContent = stats.inProgress;
+      document.getElementById('stat-score').textContent = stats.score + '%';
+      document.getElementById('progress-text').textContent = stats.completed + '/' + lessons.length;
+      document.getElementById('progress-bar').style.width = stats.score + '%';
+    }
+
+    function renderLessons() {
+      const container = document.getElementById('lessons-list');
+      container.innerHTML = lessons.map((lesson, idx) => {
+        const isCompleted = completedLessons.has(lesson.id);
+        return `
+          <div class="lesson-card p-5 flex items-center gap-4 cursor-pointer hover:shadow-2xl transition-all" 
+               style="animation: slideUp 0.6s ease forwards; animation-delay: ${idx * 0.08}s;"
+               onclick="openLesson(${idx})">
+            <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-black ${isCompleted ? 'gradient-4 text-white shadow-lg' : 'bg-gradient-to-br from-purple-100 to-pink-100 text-gray-700'}">
+              ${isCompleted ? '✅' : lesson.icon}
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-gray-800 text-lg">${lesson.title}</h3>
+              <p class="text-sm text-gray-500">${lesson.description}</p>
+            </div>
+            ${isCompleted ? '<span class="text-green-500 font-bold text-sm">تکمیل‌شده</span>' : '<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>'}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById('quiz-content');
+      container.innerHTML = quizQuestions.map((q, qIdx) => `
+        <div class="lesson-card p-5 space-y-3 animate-slide-up" style="animation-delay: ${qIdx * 0.05}s;">
+          <p class="font-bold text-gray-800 text-lg">${qIdx + 1}. ${q.question}</p>
+          <div class="space-y-2">
+            ${q.options.map((opt, oIdx) => `
+              <button 
+                onclick="selectAnswer(${qIdx}, ${oIdx})"
+                class="w-full p-4 text-right rounded-xl border-2 font-medium transition-all ${
+                  quizAnswers[qIdx] === oIdx 
+                    ? (oIdx === q.correct ? 'border-green-500 bg-green-50 text-green-700' : 'border-red-500 bg-red-50 text-red-700')
+                    : 'border-gray-200 hover:border-purple-300 text-gray-700'
+                }"
+              >
+                ${opt}
+                ${quizAnswers[qIdx] === oIdx && oIdx === q.correct ? ' ✅' : ''}
+                ${quizAnswers[qIdx] === oIdx && oIdx !== q.correct ? ' ❌' : ''}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderCheatsheet() {
+      const container = document.getElementById('cheatsheet-content');
+      const colors = ['gradient-1', 'gradient-2', 'gradient-3', 'gradient-4', 'gradient-5'];
+      container.innerHTML = cheatsheetItems.map((item, idx) => `
+        <div class="lesson-card p-4 animate-slide-up" style="animation-delay: ${idx * 0.04}s;">
+          <p class="text-xs text-gray-500 mb-2 font-bold">${item.title}</p>
+          <code class="block ${colors[idx % 5]} text-white p-3 rounded-xl text-sm font-mono font-bold">${item.code}</code>
+        </div>
+      `).join('');
+    }
+
+    function updateLessonNav() {
+      const progress = Math.round(((currentLesson + 1) / lessons.length) * 100);
+      document.getElementById('current-lesson-num').textContent = currentLesson + 1;
+      document.getElementById('progress-bar-small').style.width = progress + '%';
+      document.getElementById('prev-btn').disabled = currentLesson === 0;
+      
+      const isLastLesson = currentLesson === lessons.length - 1;
+      document.getElementById('next-btn').innerHTML = isLastLesson 
+        ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span>تکمیل</span>'
+        : '<span>درس بعدی</span><svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>';
+      
+      document.getElementById('next-btn').classList.toggle('completed', isLastLesson);
+    }
+
+    function openLesson(idx) {
+      currentLesson = idx;
+      const lesson = lessons[idx];
+      document.getElementById('lesson-content').innerHTML = lesson.content;
+      document.getElementById('home-view').classList.add('hidden');
+      document.getElementById('quiz-view').classList.add('hidden');
+      document.getElementById('cheatsheet-view').classList.add('hidden');
+      document.getElementById('lesson-view').classList.remove('hidden');
+      document.getElementById('lesson-nav').classList.add('active');
+      updateLessonNav();
+      markLessonComplete(lesson.id);
+      updateNav('lesson');
+      window.scrollTo(0, 0);
+    }
+
+    function showHome() {
+      document.getElementById('home-view').classList.remove('hidden');
+      document.getElementById('lesson-view').classList.add('hidden');
+      document.getElementById('quiz-view').classList.add('hidden');
+      document.getElementById('cheatsheet-view').classList.add('hidden');
+      document.getElementById('lesson-nav').classList.remove('active');
+      updateNav('home');
+      window.scrollTo(0, 0);
+    }
+
+    function showQuiz() {
+      document.getElementById('home-view').classList.add('hidden');
+      document.getElementById('lesson-view').classList.add('hidden');
+      document.getElementById('quiz-view').classList.remove('hidden');
+      document.getElementById('cheatsheet-view').classList.add('hidden');
+      document.getElementById('lesson-nav').classList.remove('active');
+      renderQuiz();
+      updateNav('quiz');
+      window.scrollTo(0, 0);
+    }
+
+    function showCheatsheet() {
+      document.getElementById('home-view').classList.add('hidden');
+      document.getElementById('lesson-view').classList.add('hidden');
+      document.getElementById('quiz-view').classList.add('hidden');
+      document.getElementById('cheatsheet-view').classList.remove('hidden');
+      document.getElementById('lesson-nav').classList.remove('active');
+      updateNav('cheat');
+      window.scrollTo(0, 0);
+    }
+
+    function updateNav(active) {
+      ['home', 'quiz', 'cheat'].forEach(id => {
+        if (id === 'lesson') return;
+        document.getElementById(`nav-${id}`)?.classList.toggle('active', id === active);
+      });
+      document.getElementById('nav-home').classList.toggle('active', active === 'home');
+    }
+
+    function nextLesson() {
+      if (currentLesson < lessons.length - 1) {
+        openLesson(currentLesson + 1);
+      } else {
+        showHome();
+      }
+    }
+
+    function prevLesson() {
+      if (currentLesson > 0) {
+        openLesson(currentLesson - 1);
+      }
+    }
+
+    function selectAnswer(qIdx, aIdx) {
+      quizAnswers[qIdx] = aIdx;
+      renderQuiz();
+    }
+
+    async function init() {
+      await initDataSDK();
+      renderLessons();
+      renderCheatsheet();
+      updateStats();
+      
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            document.getElementById('app-title').textContent = config.app_title || defaultConfig.app_title;
+            document.getElementById('welcome-text').textContent = config.welcome_text || defaultConfig.welcome_text;
+          },
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              { get: () => config.primary_color || '#667eea', set: (v) => window.elementSdk.setConfig({ primary_color: v }) },
+              { get: () => config.secondary_color || '#764ba2', set: (v) => window.elementSdk.setConfig({ secondary_color: v }) },
+              { get: () => config.background_color || '#f9fafb', set: (v) => window.elementSdk.setConfig({ background_color: v }) },
+              { get: () => config.text_color || '#1f2937', set: (v) => window.elementSdk.setConfig({ text_color: v }) },
+              { get: () => config.card_color || '#ffffff', set: (v) => window.elementSdk.setConfig({ card_color: v }) }
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ['app_title', config.app_title || defaultConfig.app_title],
+            ['welcome_text', config.welcome_text || defaultConfig.welcome_text]
+          ])
+        });
+      }
+    }
+
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0cd6dbe278dc89',t:'MTc3MTU3ODI5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
